@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/phodal/simple-ttd/issues"
   },
-  "homepage": "https://github.com/phodal/simple-ttd#readme"
+  "homepage": "https://github.com/phodal/simple-ttd#readme",
+  "dependencies": {
+    "acorn": "^8.2.1",
+    "escodegen": "^2.0.0"
+  }
 }
