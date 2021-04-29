@@ -42,19 +42,35 @@ class InstrumentorVisitor {
                 id: {type: "Identifier", name: "$_$idt"},
                 init: {
                     type: "CallExpression",
-                    callee: {type: "Identifier", name: "$_$st"},
+                    callee: {type: "Identifier", name: "$_$start"},
                     arguments: ""
                 }
             }]
         }
     }
 
+    insertEnd() {
+        return {
+            type: "ExpressionStatement",
+            expression: {
+                type: "CallExpression",
+                callee: {type: "Identifier", name: "$_$end"},
+                arguments: ""
+            }
+        }
+    }
+
     run(nodes) {
-        let new_nodes = [];
-        // new_nodes.push(this.insertStart());
-        let items = this.visitNodes(nodes.body);
-        let fin = new_nodes.concat(items);
-        return fin;
+        let origin_body = nodes.body;
+        nodes.body = [];
+        nodes.body.push(this.insertStart());
+
+        let items = this.visitNodes(origin_body);
+        nodes.body = nodes.body.concat(items);
+
+        nodes.body.push(this.insertEnd());
+
+        return nodes;
     }
 }
 
@@ -67,9 +83,8 @@ Instrumentor.prototype = {
     instrument: function (content) {
         let node = this.parse(content);
         let visitor = new InstrumentorVisitor();
-        // let modify = visitor.run(node)
-        // console.log(modify);
-        let generateCode = this.generate(node);
+        let modify = visitor.run(node)
+        let generateCode = this.generate(modify);
 
         return {
             code: generateCode
